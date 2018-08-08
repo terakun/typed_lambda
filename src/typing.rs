@@ -13,9 +13,9 @@ impl Type {
         match *self {
             Type::Var(ref a) => a.to_string(),
             Type::Func(ref optype, ref valtype) => match **optype {
-                Type::Var(ref a) => format!("{} \\Rightarrow {}", a, valtype.latex_fmt()),
+                Type::Var(ref a) => format!("{} \\to {}", a, valtype.latex_fmt()),
                 _ => format!(
-                    "\\left({}\\right) \\Rightarrow {}",
+                    "\\left({}\\right) \\to {}",
                     optype.latex_fmt(),
                     valtype.latex_fmt()
                 ),
@@ -81,8 +81,8 @@ impl TypedAST {
             }
             TypedAST::App(ref typed_e1, ref typed_e2) => {
                 let t1 = typed_e1.construct_type(tenv);
-                let t2 = typed_e2.construct_type(tenv);
-                if let Type::Func(ref top, ref tv) = t1 {
+                let _ = typed_e2.construct_type(tenv);
+                if let Type::Func(_, ref tv) = t1 {
                     *tv.clone()
                 } else {
                     panic!("unexpected");
@@ -113,7 +113,7 @@ impl TypedAST {
                 };
                 format!("{} \\, {}", e1str, e2str)
             }
-            TypedAST::Abs(ref s, ref t, ref e) => format!("\\lambda {} .{}", s, e.latex_fmt(),),
+            TypedAST::Abs(ref s, _, ref e) => format!("\\lambda {} .{}", s, e.latex_fmt(),),
         }
     }
     pub fn typejudge_latex(&self, t: &Type, tenv: &TypeEnv) -> String {
@@ -145,8 +145,8 @@ impl TypedAST {
             }
             TypedAST::App(ref typed_e1, ref typed_e2) => {
                 let t1 = typed_e1.to_bussproofs(tenv);
-                let t2 = typed_e2.to_bussproofs(tenv);
-                if let Type::Func(ref top, ref tv) = t1 {
+                let _ = typed_e2.to_bussproofs(tenv);
+                if let Type::Func(_, ref tv) = t1 {
                     println!("  \\BinaryInfC{{ $ {} $ }}", self.typejudge_latex(tv, tenv));
                     *tv.clone()
                 } else {
@@ -166,7 +166,7 @@ impl TypedAST {
 
     pub fn unify(&self, unifier: &Unifier) -> Self {
         match *self {
-            TypedAST::Var(ref x) => self.clone(),
+            TypedAST::Var(_) => self.clone(),
             TypedAST::App(ref e1, ref e2) => {
                 TypedAST::App(Box::new(e1.unify(unifier)), Box::new(e2.unify(unifier)))
             }
@@ -198,7 +198,7 @@ impl TypeInf {
     }
 
     fn get_type_variable(&mut self) -> Type {
-        let a = format!("a_{{{}}}", self.cnt);
+        let a = format!("\\tau_{{{}}}", self.cnt);
         self.cnt = self.cnt + 1;
         Type::Var(a)
     }

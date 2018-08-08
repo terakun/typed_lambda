@@ -105,7 +105,6 @@ impl AST {
         }
     }
 
-    // 1ステップのベータ簡約
     pub fn step(&self) -> Self {
         match *self {
             AST::Var(_) => self.clone(),

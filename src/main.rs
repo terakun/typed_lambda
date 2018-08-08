@@ -24,7 +24,7 @@ fn main() {
         }
         let exp = parser.parse(&input).expect("error");
         let mut tf = TypeInf::new();
-        let (typed_exp, t, c) = tf.type_inf(&TypeEnv::new(), &exp);
+        let (typed_exp, _, c) = tf.type_inf(&TypeEnv::new(), &exp);
         // for con in &c {
         //     println!("{} = {}", con.0.to_string(), con.1.to_string());
         // }
