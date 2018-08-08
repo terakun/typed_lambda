@@ -119,17 +119,13 @@ impl TypedAST {
     pub fn typejudge_latex(&self, t: &Type, tenv: &TypeEnv) -> String {
         let mut tenv_str: Vec<String> = Vec::new();
         for vt in tenv {
-            tenv_str.push(format!("{} \\colon {}", vt.0, vt.1.latex_fmt()));
+            tenv_str.push(format!("{} : {}", vt.0, vt.1.latex_fmt()));
         }
         if tenv.is_empty() {
-            format!(
-                " \\vdash {} \\, \\colon \\, {}",
-                self.latex_fmt(),
-                t.latex_fmt()
-            )
+            format!(" \\vdash {} : {}", self.latex_fmt(), t.latex_fmt())
         } else {
             format!(
-                "\\{{ {} \\}} \\vdash {} \\, \\colon \\, {}",
+                "\\{{ {} \\}} \\vdash {} : {}",
                 tenv_str.join(","),
                 self.latex_fmt(),
                 t.latex_fmt()
